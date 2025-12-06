@@ -8,7 +8,7 @@ import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import Loader from '../components/ui/Loader';
 import { itemsAPI } from '../services/api';
-import { formatDate, getDaysUntilExpiry, getStatusColor, getStatusLabel } from '../utils/auth';
+import { formatDate, getDaysUntilExpiry, getStatusColor, getStatusLabel, formatCurrency } from '../utils/auth';
 import { useToast } from '../components/ui/Toast';
 
 const ItemList = () => {
@@ -238,9 +238,9 @@ const ItemList = () => {
                       {item.estimatedPrice && (
                         <div className="flex justify-between text-sm">
                           <span className="text-neutral-600">Value:</span>
-                          <span className="font-medium text-neutral-900">
-                            ${item.estimatedPrice}
-                          </span>
+                              <span className="font-medium text-neutral-900">
+                                {formatCurrency(item.estimatedPrice)}
+                              </span>
                         </div>
                       )}
                     </div>

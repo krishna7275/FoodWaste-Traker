@@ -7,7 +7,7 @@ import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Loader from '../components/ui/Loader';
 import { itemsAPI } from '../services/api';
-import { formatDate, getDaysUntilExpiry, getStatusColor } from '../utils/auth';
+import { formatDate, getDaysUntilExpiry, getStatusColor, formatCurrency } from '../utils/auth';
 import { useToast } from '../components/ui/Toast';
 
 const Dashboard = () => {
@@ -83,7 +83,7 @@ const Dashboard = () => {
     },
     {
       title: 'Money Saved',
-      value: `$${stats?.moneySaved || 0}`,
+      value: formatCurrency(stats?.moneySaved || 0),
       icon: TrendingUp,
       color: 'bg-success-50 text-success-600',
       trend: null,

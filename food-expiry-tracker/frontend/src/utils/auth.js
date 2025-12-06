@@ -65,3 +65,9 @@ export const getStatusLabel = (status) => {
   };
   return labels[status] || status;
 };
+
+// Format currency to Indian Rupee
+export const formatCurrency = (amount) => {
+  const value = Number(amount) || 0;
+  return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(value);
+};

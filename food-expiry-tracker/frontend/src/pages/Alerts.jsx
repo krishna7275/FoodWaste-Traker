@@ -6,7 +6,7 @@ import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Loader from '../components/ui/Loader';
 import { itemsAPI } from '../services/api';
-import { formatDate, getDaysUntilExpiry } from '../utils/auth';
+import { formatDate, getDaysUntilExpiry, formatCurrency } from '../utils/auth';
 import { useToast } from '../components/ui/Toast';
 
 const Alerts = () => {
@@ -188,7 +188,7 @@ const Alerts = () => {
                         </div>
                         {alert.item.estimatedPrice && (
                           <p className="text-sm text-neutral-600 mt-2">
-                            Estimated value: <span className="font-medium">${alert.item.estimatedPrice}</span>
+                            Estimated value: <span className="font-medium">{formatCurrency(alert.item.estimatedPrice)}</span>
                           </p>
                         )}
                       </div>

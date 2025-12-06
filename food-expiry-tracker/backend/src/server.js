@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import authRoutes from './routes/auth.js';
 import itemRoutes from './routes/items.js';
 import barcodeRoutes from './routes/barcode.js';
@@ -9,7 +11,20 @@ import ocrRoutes from './routes/ocr.js';
 import recipeRoutes from './routes/recipes.js';
 import { startReminderJob } from './jobs/reminderJob.js';
 
-dotenv.config();
+// Get the directory of the current file (for ES modules)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load .env from the backend root directory
+const envPath = path.resolve(__dirname, '../.env');
+dotenv.config({ path: envPath });
+
+// Debug: log if API key is loaded
+if (process.env.ANTHROPIC_API_KEY) {
+  console.log('✅ Anthropic API key loaded successfully');
+} else {
+  console.warn('⚠️  ANTHROPIC_API_KEY not found in environment');
+}
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -35,7 +50,15 @@ mongoose.connect(process.env.MONGODB_URI)
   });
 
 // Routes
+// Routes - Order matters! More specific routes first
 app.use('/api/auth', authRoutes);
+
+// Health check (before other routes)
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', message: 'Food Expiry Tracker API is running' });
+});
+
+// Other routes
 app.use('/api/items', itemRoutes);
 app.use('/api/barcode', barcodeRoutes);
 app.use('/api/ocr', ocrRoutes);

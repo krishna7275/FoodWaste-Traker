@@ -235,7 +235,7 @@ const AddItem = () => {
 
                 <div>
                   <Input
-                    label="Estimated Price ($)"
+                    label="Estimated Price (₹)"
                     type="number"
                     name="estimatedPrice"
                     value={formData.estimatedPrice}

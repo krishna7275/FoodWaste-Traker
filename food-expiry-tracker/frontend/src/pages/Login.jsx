@@ -6,7 +6,7 @@ import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
 import { useToast } from '../components/ui/Toast';
 import { authAPI } from '../services/api';
-import { setAuthData } from '../utils/auth';
+import { setAuthData, formatCurrency } from '../utils/auth';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -130,7 +130,7 @@ const Login = () => {
             <p className="text-xs text-neutral-600">Waste Reduced</p>
           </div>
           <div className="bg-white/50 backdrop-blur rounded-lg p-3">
-            <p className="text-2xl font-bold text-success">$1,200</p>
+            <p className="text-2xl font-bold text-success">{formatCurrency(1200)}</p>
             <p className="text-xs text-neutral-600">Avg. Saved/Year</p>
           </div>
           <div className="bg-white/50 backdrop-blur rounded-lg p-3">
