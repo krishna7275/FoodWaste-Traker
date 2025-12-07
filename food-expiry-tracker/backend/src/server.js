@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import authRoutes from './routes/auth.js';
 import itemRoutes from './routes/items.js';
@@ -15,9 +16,15 @@ import { startReminderJob } from './jobs/reminderJob.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Load .env from the backend root directory
-const envPath = path.resolve(__dirname, '../.env');
-dotenv.config({ path: envPath });
+// Load .env from the project root directory
+const envPath = path.resolve(__dirname, '../../.env');
+console.log('Looking for .env at:', envPath);
+if (fs.existsSync(envPath)) {
+  console.log('✅ .env file found');
+  dotenv.config({ path: envPath });
+} else {
+  console.warn('⚠️  .env file not found at', envPath);
+}
 
 // Debug: log if API key is loaded
 console.log('ANTHROPIC_API_KEY value:', process.env.ANTHROPIC_API_KEY);
