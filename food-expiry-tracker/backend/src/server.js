@@ -63,27 +63,30 @@ mongoose.connect(process.env.MONGODB_URI)
     process.exit(1);
   });
 
-// Routes
-// Routes - Order matters! More specific routes first
-app.use('/auth', authRoutes);
+// Create a master router for all API endpoints
+const apiRouter = express.Router();
 
-// Other routes
-app.use('/items', itemRoutes);
-app.use('/barcode', barcodeRoutes);
-app.use('/ocr', ocrRoutes);
-app.use('/recipes', recipeRoutes);
-app.use('/analytics', analyticsRoutes);
-app.use('/achievements', achievementRoutes);
-app.use('/notifications', notificationRoutes);
-app.use('/leaderboard', leaderboardRoutes);
-app.use('/challenges', challengeRoutes);
-app.use('/meal-planning', mealPlanningRoutes);
-app.use('/cron', cronRoutes); // Add the new cron route
+// Mount all routes onto the master router
+apiRouter.use('/auth', authRoutes);
+apiRouter.use('/items', itemRoutes);
+apiRouter.use('/barcode', barcodeRoutes);
+apiRouter.use('/ocr', ocrRoutes);
+apiRouter.use('/recipes', recipeRoutes);
+apiRouter.use('/analytics', analyticsRoutes);
+apiRouter.use('/achievements', achievementRoutes);
+apiRouter.use('/notifications', notificationRoutes);
+apiRouter.use('/leaderboard', leaderboardRoutes);
+apiRouter.use('/challenges', challengeRoutes);
+apiRouter.use('/meal-planning', mealPlanningRoutes);
+apiRouter.use('/cron', cronRoutes);
 
 // Health check
-app.get('/health', (req, res) => {
+apiRouter.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Food Expiry Tracker API is running' });
 });
+
+// Mount the master router under the /api base path
+app.use('/api', apiRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
