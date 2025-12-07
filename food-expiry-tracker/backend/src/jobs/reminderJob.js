@@ -8,10 +8,8 @@ import {
 } from '../services/notificationService.js';
 
 // Function to create alerts for expiring items
-const checkExpiringItems = async () => {
+const checkAndCreateAlerts = async () => {
   try {
-    console.log('🔔 Running expiry check job...');
-
     const now = new Date();
     now.setHours(0, 0, 0, 0);
 
@@ -73,60 +71,11 @@ const checkExpiringItems = async () => {
               read: false
             });
 
-            console.log(`✅ Alert created for user ${user.email}: ${message}`);
-
-            // Send notifications based on user preferences
-            const notificationPromises = [];
-
-            // Send email notification
-            if (user.preferences.emailNotifications && user.preferences.notificationsEnabled) {
-              notificationPromises.push(
-                sendEmailNotification(user.email, `⏰ ${message}`, {
-                  name: item.name,
-                  quantity: item.quantity,
-                  unit: item.unit || 'pieces',
-                  category: item.category || 'Uncategorized',
-                  expiryDate: item.expiryDate,
-                  status: message,
-                }).then(success => {
-                  if (success) {
-                    alert.emailSent = true;
-                    alert.sent = true;
-                  }
-                  return success;
-                })
-              );
-            }
-
-            // Send WhatsApp notification
-            if (user.preferences.whatsappNotifications && user.preferences.notificationsEnabled && user.phoneNumber) {
-              notificationPromises.push(
-                sendWhatsAppNotification(user.phoneNumber, {
-                  name: item.name,
-                  quantity: item.quantity,
-                  unit: item.unit || 'pieces',
-                  category: item.category || 'Uncategorized',
-                  expiryDate: item.expiryDate,
-                  status: message,
-                }).then(success => {
-                  if (success) {
-                    alert.whatsappSent = true;
-                    alert.sent = true;
-                  }
-                  return success;
-                })
-              );
-            }
-
-            // Wait for all notifications to be sent
-            await Promise.allSettled(notificationPromises);
-            await alert.save();
+            console.log(`✅ Alert created for ${item.name} for user ${user.email}`);
           }
         }
       }
     }
-
-    console.log('✅ Expiry check job completed');
   } catch (error) {
     console.error('❌ Error in expiry check job:', error);
   }
@@ -134,15 +83,80 @@ const checkExpiringItems = async () => {
 
 // Function to start the cron job
 export const startReminderJob = () => {
-  // Run every day at 8:00 AM
+  // Schedule to run every day at 8:00 AM
   cron.schedule('0 8 * * *', async () => {
-    await checkExpiringItems();
+    console.log('🔔 Running daily expiry check and notification job...');
+    await checkAndCreateAlerts();
+    await sendReminderNotifications();
   });
 
-  console.log('⏰ Reminder cron job scheduled (runs daily at 8:00 AM)');
+  console.log('⏰ Cron job scheduled to run daily at 8:00 AM.');
 
-  // Run immediately on startup for testing
+  // For development: run once on startup after a short delay
   setTimeout(() => {
-    checkExpiringItems();
+    console.log('🚀 Running initial job on startup...');
+    checkAndCreateAlerts();
+    sendReminderNotifications();
   }, 5000);
+};
+
+// This function finds expiring items and sends notifications. It's exported to be used by the cron API endpoint.
+export const sendReminderNotifications = async () => {
+  try {
+    console.log('📤 Checking for unsent alerts to notify users...');
+    const unsentAlerts = await Alert.find({ sent: false }).populate('userId').populate('itemId');
+
+    for (const alert of unsentAlerts) {
+      const user = alert.userId;
+      const item = alert.itemId;
+
+      if (!user || !item) {
+        console.log(`Skipping alert ${alert._id} due to missing user or item.`);
+        continue;
+      }
+
+      const notificationPromises = [];
+
+      // Send email notification
+      if (user.preferences.emailNotifications && user.preferences.notificationsEnabled) {
+        notificationPromises.push(
+          sendEmailNotification(user.email, `⏰ ${alert.message}`, {
+            name: item.name,
+            quantity: item.quantity,
+            unit: item.unit || 'pieces',
+            category: item.category || 'Uncategorized',
+            expiryDate: item.expiryDate,
+            status: alert.message,
+          }).then(success => {
+            if (success) alert.emailSent = true;
+            return success;
+          })
+        );
+      }
+
+      // Send WhatsApp notification
+      if (user.preferences.whatsappNotifications && user.preferences.notificationsEnabled && user.phoneNumber) {
+        notificationPromises.push(
+          sendWhatsAppNotification(user.phoneNumber, {
+            name: item.name,
+            quantity: item.quantity,
+            unit: item.unit || 'pieces',
+            category: item.category || 'Uncategorized',
+            expiryDate: item.expiryDate,
+            status: alert.message,
+          }).then(success => {
+            if (success) alert.whatsappSent = true;
+            return success;
+          })
+        );
+      }
+
+      await Promise.allSettled(notificationPromises);
+      alert.sent = alert.emailSent || alert.whatsappSent;
+      await alert.save();
+      console.log(`📤 Processed notifications for alert ${alert._id}`);
+    }
+  } catch (error) {
+    console.error('❌ Error sending reminder notifications:', error);
+  }
 };
