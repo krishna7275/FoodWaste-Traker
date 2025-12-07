@@ -22,10 +22,23 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Password is required'],
     minlength: [6, 'Password must be at least 6 characters']
   },
+  phoneNumber: {
+    type: String,
+    trim: true,
+    sparse: true
+  },
   preferences: {
     notificationsEnabled: {
       type: Boolean,
       default: true
+    },
+    emailNotifications: {
+      type: Boolean,
+      default: true
+    },
+    whatsappNotifications: {
+      type: Boolean,
+      default: false
     },
     reminderDays: {
       type: [Number],
@@ -53,6 +66,25 @@ const userSchema = new mongoose.Schema({
     moneySaved: {
       type: Number,
       default: 0
+    },
+    points: {
+      type: Number,
+      default: 0
+    },
+    level: {
+      type: Number,
+      default: 1
+    },
+    currentStreak: {
+      type: Number,
+      default: 0
+    },
+    longestStreak: {
+      type: Number,
+      default: 0
+    },
+    lastActiveDate: {
+      type: Date
     }
   }
 }, {

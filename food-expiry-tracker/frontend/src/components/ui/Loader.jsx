@@ -16,7 +16,7 @@ const Loader = ({ size = 'md', text }) => {
         transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
       />
       {text && (
-        <p className="text-neutral-600 text-sm font-medium">{text}</p>
+        <p className="text-neutral-600 dark:text-neutral-400 text-sm font-medium">{text}</p>
       )}
     </div>
   );

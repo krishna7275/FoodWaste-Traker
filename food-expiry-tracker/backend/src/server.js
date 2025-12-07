@@ -10,6 +10,12 @@ import itemRoutes from './routes/items.js';
 import barcodeRoutes from './routes/barcode.js';
 import ocrRoutes from './routes/ocr.js';
 import recipeRoutes from './routes/recipes.js';
+import analyticsRoutes from './routes/analytics.js';
+import achievementRoutes from './routes/achievements.js';
+import notificationRoutes from './routes/notifications.js';
+import leaderboardRoutes from './routes/leaderboard.js';
+import challengeRoutes from './routes/challenges.js';
+import mealPlanningRoutes from './routes/mealPlanning.js';
 import { startReminderJob } from './jobs/reminderJob.js';
 
 // Get the directory of the current file (for ES modules)
@@ -71,6 +77,12 @@ app.use('/api/items', itemRoutes);
 app.use('/api/barcode', barcodeRoutes);
 app.use('/api/ocr', ocrRoutes);
 app.use('/api/recipes', recipeRoutes);
+app.use('/api/analytics', analyticsRoutes);
+app.use('/api/achievements', achievementRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/leaderboard', leaderboardRoutes);
+app.use('/api/challenges', challengeRoutes);
+app.use('/api/meal-planning', mealPlanningRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

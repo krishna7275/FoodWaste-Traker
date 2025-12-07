@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Package, AlertTriangle, CheckCircle, TrendingUp, Plus, ChefHat, Leaf } from 'lucide-react';
+import { Package, AlertTriangle, CheckCircle, TrendingUp, Plus, ChefHat, Leaf, Trophy, BarChart3, Trash2 } from 'lucide-react';
 import Navbar from '../components/ui/Navbar';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Loader from '../components/ui/Loader';
 import StatsCard from '../components/StatsCard';
-import { itemsAPI } from '../services/api';
+import { itemsAPI, achievementsAPI } from '../services/api';
+import ShareImpact from '../components/ShareImpact';
 import { formatDate, getDaysUntilExpiry, getStatusColor, formatCurrency } from '../utils/auth';
 import { useToast } from '../components/ui/Toast';
 import { useI18n } from '../context/I18nContext';
@@ -22,6 +23,8 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchDashboardData();
+    // Check for new achievements
+    achievementsAPI.check().catch(console.error);
   }, []);
 
   const fetchDashboardData = async () => {
@@ -94,7 +97,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-dark-bg transition-colors duration-300">
       <Navbar />
 
       <div className="container-custom py-8">
@@ -104,10 +107,10 @@ const Dashboard = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-display font-bold text-neutral-900 mb-2">
+          <h1 className="text-3xl font-display font-bold text-neutral-900 dark:text-neutral-dark-text mb-2">
             {t('dashboard.title')}
           </h1>
-          <p className="text-neutral-600">
+          <p className="text-neutral-600 dark:text-neutral-dark-text-secondary">
             {t('dashboard.subtitle')}
           </p>
         </motion.div>
@@ -153,10 +156,10 @@ const Dashboard = () => {
           className="mb-8"
         >
           <Card>
-            <h2 className="text-xl font-semibold text-neutral-900 mb-4">
+            <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-dark-text mb-4">
               Quick Actions
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <Button
                 variant="primary"
                 icon={Plus}
@@ -174,12 +177,36 @@ const Dashboard = () => {
                 View All Items
               </Button>
               <Button
+                variant="warning"
+                icon={Trash2}
+                onClick={() => navigate('/waste-management')}
+                className="w-full"
+              >
+                Manage Waste
+              </Button>
+              <Button
                 variant="success"
                 icon={ChefHat}
                 onClick={() => navigate('/recipes')}
                 className="w-full"
               >
                 Get Recipes
+              </Button>
+              <Button
+                variant="primary"
+                icon={BarChart3}
+                onClick={() => navigate('/analytics')}
+                className="w-full"
+              >
+                View Analytics
+              </Button>
+              <Button
+                variant="warning"
+                icon={Trophy}
+                onClick={() => navigate('/achievements')}
+                className="w-full"
+              >
+                Achievements
               </Button>
             </div>
           </Card>
@@ -193,10 +220,10 @@ const Dashboard = () => {
         >
           <Card>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-neutral-900">
+              <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-dark-text">
                 Expiring Soon (Next 7 Days)
               </h2>
-              <span className="text-sm text-neutral-600">
+              <span className="text-sm text-neutral-600 dark:text-neutral-dark-text-secondary">
                 {expiringItems.length} item{expiringItems.length !== 1 ? 's' : ''}
               </span>
             </div>
@@ -269,20 +296,23 @@ const Dashboard = () => {
           transition={{ delay: 0.6 }}
           className="mt-8"
         >
-          <Card className="bg-gradient-to-r from-success-50 to-primary-50 border-success-200">
+          <Card className="bg-gradient-to-r from-success-50 to-primary-50 dark:from-success-900/20 dark:to-primary-900/20 border-success-200 dark:border-success-800">
             <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-semibold text-neutral-900 mb-2">
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-dark-text mb-2">
                   Your Environmental Impact
                 </h3>
-                <p className="text-neutral-600 mb-4">
+                <p className="text-neutral-600 dark:text-neutral-dark-text-secondary mb-4">
                   By using FreshTrack, you've prevented approximately{' '}
-                  <span className="font-bold text-success-600">
-                    {Math.round((stats?.itemsSaved || 0) * 0.5)} kg
+                  <span className="font-bold text-success-600 dark:text-success-400">
+                    {Math.round((stats?.itemsSaved || 0) * 2.5 * 10) / 10} kg
                   </span>{' '}
                   of CO₂ emissions! 🌍
                 </p>
-                <p className="text-sm text-neutral-500">
+                <div className="mb-4">
+                  <ShareImpact stats={stats} type="dashboard" />
+                </div>
+                <p className="text-sm text-neutral-500 dark:text-neutral-dark-text-muted">
                   Keep up the great work reducing food waste!
                 </p>
               </div>

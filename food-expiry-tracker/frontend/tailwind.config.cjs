@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -70,6 +71,14 @@ module.exports = {
           700: '#60667B',
           800: '#404452',
           900: '#202124',
+          // Dark mode optimized colors (warmer, softer, eye-friendly)
+          'dark-bg': '#1a1d23',      // Soft dark blue-gray background
+          'dark-surface': '#23272f', // Card/surface color
+          'dark-surface-hover': '#2a2f38', // Hover state
+          'dark-border': '#2d333b',  // Subtle borders
+          'dark-text': '#e4e7eb',    // Primary text
+          'dark-text-secondary': '#b0b8c4', // Secondary text
+          'dark-text-muted': '#8b95a1', // Muted text
         },
       },
       fontFamily: {

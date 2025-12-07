@@ -13,11 +13,22 @@
   }
 
   * {
-    @apply border-neutral-200 box-border;
+    @apply border-neutral-200 dark:border-neutral-dark-border box-border;
   }
   
   body {
-    @apply bg-neutral-50 text-neutral-900 font-sans antialiased;
+    @apply bg-neutral-50 dark:bg-neutral-dark-bg text-neutral-900 dark:text-neutral-dark-text font-sans antialiased transition-colors duration-300;
+    /* Smooth color transitions for better eye comfort */
+  }
+  
+  /* Dark mode specific improvements */
+  .dark {
+    color-scheme: dark;
+  }
+  
+  /* Reduce blue light in dark mode for better eye comfort */
+  .dark body {
+    background-color: #1a1d23;
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -43,18 +54,19 @@
   }
   
   .btn-secondary {
-    @apply bg-white text-neutral-700 px-6 py-3 rounded-lg font-medium border border-neutral-300
-           hover:bg-neutral-50 active:bg-neutral-100
+    @apply bg-white dark:bg-neutral-dark-surface text-neutral-700 dark:text-neutral-dark-text-secondary px-6 py-3 rounded-lg font-medium border border-neutral-300 dark:border-neutral-dark-border
+           hover:bg-neutral-50 dark:hover:bg-neutral-dark-surface-hover active:bg-neutral-100 dark:active:bg-neutral-dark-surface-hover
            transition-colors duration-200 
-           focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2
+           focus:outline-none focus:ring-2 focus:ring-neutral-400 dark:focus:ring-neutral-600 focus:ring-offset-2 dark:focus:ring-offset-neutral-dark-bg
            disabled:opacity-50 disabled:cursor-not-allowed;
   }
   
   .input-field {
-    @apply w-full px-4 py-3 border border-neutral-300 rounded-lg 
-           focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-primary-400
+    @apply w-full px-4 py-3 border border-neutral-300 dark:border-neutral-dark-border rounded-lg 
+           bg-white dark:bg-neutral-dark-surface text-neutral-900 dark:text-neutral-dark-text
+           focus:outline-none focus:ring-2 focus:ring-primary-400 dark:focus:ring-primary-500 focus:border-primary-400 dark:focus:border-primary-500
            transition-colors duration-200
-           placeholder:text-neutral-400;
+           placeholder:text-neutral-400 dark:placeholder:text-neutral-dark-text-muted;
   }
   
   .badge-fresh {

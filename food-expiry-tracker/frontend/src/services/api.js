@@ -67,4 +67,43 @@ export const recipesAPI = {
   generate: (ingredients) => api.post('/recipes/test', { ingredients }),
 };
 
+// Analytics API
+export const analyticsAPI = {
+  getOverview: () => api.get('/analytics/overview'),
+  getInsights: () => api.get('/analytics/insights'),
+};
+
+// Achievements API
+export const achievementsAPI = {
+  getAll: () => api.get('/achievements'),
+  check: () => api.post('/achievements/check'),
+  getStats: () => api.get('/achievements/stats'),
+};
+
+// Notifications API
+export const notificationsAPI = {
+  getPreferences: () => api.get('/notifications/preferences'),
+  updatePreferences: (data) => api.put('/notifications/preferences', data),
+  testEmail: () => api.post('/notifications/test/email'),
+  testWhatsApp: () => api.post('/notifications/test/whatsapp'),
+};
+
+// Leaderboard API
+export const leaderboardAPI = {
+  getLeaderboard: (type = 'points', limit = 50) => api.get('/leaderboard', { params: { type, limit } }),
+  getCommunityStats: () => api.get('/leaderboard/community-stats'),
+  getUserRank: () => api.get('/leaderboard/user-rank'),
+};
+
+// Challenges API
+export const challengesAPI = {
+  getAll: () => api.get('/challenges'),
+  getActive: () => api.get('/challenges/active'),
+};
+
+// Meal Planning API
+export const mealPlanningAPI = {
+  suggest: (days = 7) => api.post(`/meal-planning/suggest?days=${days}`),
+};
+
 export default api;

@@ -34,7 +34,11 @@ router.post('/', async (req, res) => {
     await item.save();
 
     // Update user stats
-    await User.findByIdAndUpdate(req.userId, { $inc: { 'stats.totalItems': 1 } });
+    const user = await User.findById(req.userId);
+    await User.findByIdAndUpdate(req.userId, { 
+      $inc: { 'stats.totalItems': 1 },
+      $set: { 'stats.lastActiveDate': new Date() }
+    });
 
     res.status(201).json({ message: 'Item added successfully', item });
   } catch (error) {
@@ -168,10 +172,32 @@ router.patch('/:id/consume', async (req, res) => {
     const wasSaved = item.daysUntilExpiry >= 0;
     const updateField = wasSaved ? 'stats.itemsSaved' : 'stats.itemsWasted';
     
+    const user = await User.findById(req.userId);
+    const today = new Date().toDateString();
+    const lastActive = user.stats.lastActiveDate ? new Date(user.stats.lastActiveDate).toDateString() : null;
+    
+    // Update streak
+    let currentStreak = user.stats.currentStreak || 0;
+    if (lastActive === today) {
+      // Already active today, no change
+    } else if (lastActive === new Date(Date.now() - 24 * 60 * 60 * 1000).toDateString()) {
+      // Active yesterday, increment streak
+      currentStreak += 1;
+    } else {
+      // Break in streak, reset to 1
+      currentStreak = 1;
+    }
+    
     await User.findByIdAndUpdate(req.userId, {
       $inc: {
         [updateField]: 1,
-        'stats.moneySaved': wasSaved ? (item.estimatedPrice || 0) : 0
+        'stats.moneySaved': wasSaved ? (item.estimatedPrice || 0) : 0,
+        'stats.points': wasSaved ? 5 : 0 // Award points for saving items
+      },
+      $set: {
+        'stats.currentStreak': currentStreak,
+        'stats.lastActiveDate': new Date(),
+        'stats.longestStreak': Math.max(currentStreak, user.stats.longestStreak || 0)
       }
     });
 

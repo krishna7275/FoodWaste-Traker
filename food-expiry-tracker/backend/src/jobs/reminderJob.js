@@ -2,6 +2,8 @@ import cron from 'node-cron';
 import Item from '../models/Item.js';
 import Alert from '../models/Alert.js';
 import User from '../models/User.js';
+import { sendExpiryAlert } from '../services/emailService.js';
+import { sendWhatsAppAlert } from '../services/whatsappService.js';
 
 // Function to create alerts for expiring items
 const checkExpiringItems = async () => {
@@ -58,7 +60,7 @@ const checkExpiringItems = async () => {
               message = `${item.name} expires in ${daysUntilExpiry} days`;
             }
 
-            await Alert.create({
+            const alert = await Alert.create({
               userId: user._id,
               itemId: item._id,
               type: alertType,
@@ -70,6 +72,39 @@ const checkExpiringItems = async () => {
             });
 
             console.log(`✅ Alert created for user ${user.email}: ${message}`);
+
+            // Send notifications based on user preferences
+            const notificationPromises = [];
+
+            // Send email notification
+            if (user.preferences.emailNotifications && user.preferences.notificationsEnabled) {
+              notificationPromises.push(
+                sendExpiryAlert(user, item, daysUntilExpiry).then(result => {
+                  if (result.success) {
+                    alert.sent = true;
+                    alert.emailSent = true;
+                  }
+                  return result;
+                })
+              );
+            }
+
+            // Send WhatsApp notification
+            if (user.preferences.whatsappNotifications && user.preferences.notificationsEnabled && user.phoneNumber) {
+              notificationPromises.push(
+                sendWhatsAppAlert(user, item, daysUntilExpiry).then(result => {
+                  if (result.success) {
+                    alert.sent = true;
+                    alert.whatsappSent = true;
+                  }
+                  return result;
+                })
+              );
+            }
+
+            // Wait for all notifications to be sent
+            await Promise.allSettled(notificationPromises);
+            await alert.save();
           }
         }
       }

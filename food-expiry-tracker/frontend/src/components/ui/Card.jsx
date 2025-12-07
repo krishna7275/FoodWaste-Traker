@@ -17,8 +17,10 @@ const Card = ({
   return (
     <Component
       className={`
-        bg-white rounded-xl shadow-md p-6 w-full overflow-hidden
-        ${hover ? 'cursor-pointer hover:shadow-lg transition-shadow' : ''}
+        bg-white dark:bg-neutral-dark-surface rounded-xl shadow-md dark:shadow-black/30 p-6 w-full overflow-hidden
+        border border-transparent dark:border-neutral-dark-border/50
+        ${hover ? 'cursor-pointer hover:shadow-lg dark:hover:shadow-black/40 dark:hover:bg-neutral-dark-surface-hover transition-all duration-300' : ''}
+        transition-all duration-300
         ${className}
       `}
       onClick={onClick}

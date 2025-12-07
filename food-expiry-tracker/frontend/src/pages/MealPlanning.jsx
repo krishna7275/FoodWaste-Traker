@@ -5,7 +5,7 @@ import Navbar from '../components/ui/Navbar';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Loader from '../components/ui/Loader';
-import { itemsAPI, recipesAPI } from '../services/api';
+import { itemsAPI, mealPlanningAPI } from '../services/api';
 import { useToast } from '../components/ui/Toast';
 
 const MealPlanning = () => {
@@ -39,19 +39,9 @@ const MealPlanning = () => {
 
     setIsGenerating(true);
     try {
-      const ingredients = expiringItems.map(item => item.name);
-      const response = await recipesAPI.generate(ingredients);
-      
-      // Create a week-long meal plan
-      const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-      const recipes = response.data.recipes;
-      const plan = weekDays.map((day, index) => ({
-        day,
-        meal: recipes[index % recipes.length],
-      }));
-
-      setMealPlan(plan);
-      addToast('Weekly meal plan generated!', 'success');
+      const response = await mealPlanningAPI.suggest(7);
+      setMealPlan(response.data.plan || []);
+      addToast(response.data.message || 'Meal plan generated!', 'success');
     } catch (error) {
       console.error('Error generating meal plan:', error);
       addToast('Failed to generate meal plan', 'error');
@@ -72,7 +62,7 @@ const MealPlanning = () => {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-dark-bg transition-colors duration-300">
       <Navbar />
 
       <div className="container-custom py-8">
@@ -82,11 +72,11 @@ const MealPlanning = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-display font-bold text-neutral-900 mb-2">
-            Weekly Meal Planner
+          <h1 className="text-3xl font-display font-bold text-neutral-900 dark:text-neutral-dark-text mb-2">
+            AI-Powered Meal Planner
           </h1>
-          <p className="text-neutral-600">
-            Plan your week using ingredients that need to be used up
+          <p className="text-neutral-600 dark:text-neutral-dark-text-secondary">
+            Get personalized meal plans using AI to reduce food waste
           </p>
         </motion.div>
 
@@ -130,7 +120,7 @@ const MealPlanning = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-4 mb-6">
               {mealPlan.map((dayPlan, index) => (
                 <motion.div
                   key={index}
@@ -138,27 +128,69 @@ const MealPlanning = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <Card hover>
-                    <div className="flex items-center gap-2 mb-3 pb-3 border-b border-neutral-200">
+                  <Card hover className="h-full">
+                    <div className="flex items-center gap-2 mb-3 pb-3 border-b border-neutral-200 dark:border-neutral-dark-border">
                       <Calendar className="w-5 h-5 text-primary" />
-                      <h3 className="font-semibold text-neutral-900">
-                        {dayPlan.day}
+                      <h3 className="font-semibold text-neutral-900 dark:text-neutral-dark-text">
+                        Day {dayPlan.day}
                       </h3>
                     </div>
-                    <div className="space-y-2">
-                      <h4 className="font-medium text-neutral-900 flex items-center gap-2">
-                        <ChefHat className="w-4 h-4 text-primary" />
-                        {dayPlan.meal.title}
-                      </h4>
-                      <p className="text-sm text-neutral-600">
-                        ⏱️ {dayPlan.meal.time_mins} minutes
-                      </p>
-                      <p className="text-sm text-neutral-600">
-                        📊 {dayPlan.meal.difficulty}
-                      </p>
-                      <p className="text-sm text-green-600 font-medium">
-                        ♻️ {dayPlan.meal.waste_reduction_score}% waste reduced
-                      </p>
+                    <div className="space-y-3">
+                      {dayPlan.meals && (
+                        <>
+                          {dayPlan.meals.breakfast && (
+                            <div className="p-2 bg-neutral-50 dark:bg-neutral-dark-surface rounded">
+                              <h4 className="font-medium text-sm text-neutral-900 dark:text-neutral-dark-text mb-1">
+                                🍳 Breakfast
+                              </h4>
+                              <p className="text-xs text-neutral-600 dark:text-neutral-dark-text-secondary">
+                                {dayPlan.meals.breakfast.name}
+                              </p>
+                              <p className="text-xs text-neutral-500 dark:text-neutral-dark-text-muted">
+                                {dayPlan.meals.breakfast.time}
+                              </p>
+                            </div>
+                          )}
+                          {dayPlan.meals.lunch && (
+                            <div className="p-2 bg-neutral-50 dark:bg-neutral-dark-surface rounded">
+                              <h4 className="font-medium text-sm text-neutral-900 dark:text-neutral-dark-text mb-1">
+                                🥗 Lunch
+                              </h4>
+                              <p className="text-xs text-neutral-600 dark:text-neutral-dark-text-secondary">
+                                {dayPlan.meals.lunch.name}
+                              </p>
+                              <p className="text-xs text-neutral-500 dark:text-neutral-dark-text-muted">
+                                {dayPlan.meals.lunch.time}
+                              </p>
+                            </div>
+                          )}
+                          {dayPlan.meals.dinner && (
+                            <div className="p-2 bg-neutral-50 dark:bg-neutral-dark-surface rounded">
+                              <h4 className="font-medium text-sm text-neutral-900 dark:text-neutral-dark-text mb-1">
+                                🍽️ Dinner
+                              </h4>
+                              <p className="text-xs text-neutral-600 dark:text-neutral-dark-text-secondary">
+                                {dayPlan.meals.dinner.name}
+                              </p>
+                              <p className="text-xs text-neutral-500 dark:text-neutral-dark-text-muted">
+                                {dayPlan.meals.dinner.time}
+                              </p>
+                            </div>
+                          )}
+                        </>
+                      )}
+                      {dayPlan.priorityItems && dayPlan.priorityItems.length > 0 && (
+                        <div className="mt-2 pt-2 border-t border-neutral-200 dark:border-neutral-dark-border">
+                          <p className="text-xs font-medium text-warning mb-1">Priority Items:</p>
+                          <div className="flex flex-wrap gap-1">
+                            {dayPlan.priorityItems.map((item, idx) => (
+                              <span key={idx} className="text-xs px-2 py-0.5 bg-warning-100 dark:bg-warning-900/20 text-warning-700 dark:text-warning-400 rounded">
+                                {item}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </Card>
                 </motion.div>

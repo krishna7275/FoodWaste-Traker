@@ -32,6 +32,14 @@ const alertSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  emailSent: {
+    type: Boolean,
+    default: false
+  },
+  whatsappSent: {
+    type: Boolean,
+    default: false
+  },
   read: {
     type: Boolean,
     default: false

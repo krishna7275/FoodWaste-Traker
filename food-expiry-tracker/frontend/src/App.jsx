@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastProvider } from './components/ui/Toast';
 import { I18nProvider } from './context/I18nContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { isAuthenticated } from './utils/auth';
 
 // Pages
@@ -14,6 +15,11 @@ import Recipes from './pages/Recipes';
 import MealPlanning from './pages/MealPlanning';
 import Alerts from './pages/Alerts';
 import Settings from './pages/Settings';
+import Analytics from './pages/Analytics';
+import Achievements from './pages/Achievements';
+import Leaderboard from './pages/Leaderboard';
+import Challenges from './pages/Challenges';
+import WasteManagement from './pages/WasteManagement';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -28,8 +34,9 @@ function App() {
         v7_relativeSplatPath: true,
       }}
     >
-      <I18nProvider>
-        <ToastProvider>
+      <ThemeProvider>
+        <I18nProvider>
+          <ToastProvider>
         <Routes>
           {/* Public Routes */}
           <Route path="/login" element={<Login />} />
@@ -92,6 +99,46 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/analytics"
+            element={
+              <ProtectedRoute>
+                <Analytics />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/achievements"
+            element={
+              <ProtectedRoute>
+                <Achievements />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/leaderboard"
+            element={
+              <ProtectedRoute>
+                <Leaderboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/challenges"
+            element={
+              <ProtectedRoute>
+                <Challenges />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/waste-management"
+            element={
+              <ProtectedRoute>
+                <WasteManagement />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Redirect root to dashboard or login */}
           <Route
@@ -109,7 +156,8 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         </ToastProvider>
-      </I18nProvider>
+        </I18nProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }
