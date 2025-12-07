@@ -35,8 +35,8 @@ function App() {
       }}
     >
       <ThemeProvider>
-        <I18nProvider>
-          <ToastProvider>
+      <I18nProvider>
+        <ToastProvider>
         <Routes>
           {/* Public Routes */}
           <Route path="/login" element={<Login />} />
@@ -156,7 +156,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         </ToastProvider>
-        </I18nProvider>
+      </I18nProvider>
       </ThemeProvider>
     </BrowserRouter>
   );

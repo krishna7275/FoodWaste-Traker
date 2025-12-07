@@ -35,3 +35,5 @@ export const authMiddleware = async (req, res, next) => {
     res.status(500).json({ error: 'Server error during authentication' });
   }
 };
+
+export default authMiddleware;

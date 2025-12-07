@@ -277,56 +277,76 @@ const Settings = () => {
                       </div>
                     </div>
 
+                    {/* Phone Number - Always visible for WhatsApp */}
+                    <div className="p-4 bg-neutral-50 dark:bg-neutral-dark-surface rounded-lg border dark:border-neutral-dark-border">
+                      <label className="block">
+                        <p className="font-medium text-neutral-900 dark:text-neutral-dark-text mb-1">
+                          📱 Phone Number (for WhatsApp)
+                        </p>
+                        <p className="text-sm text-neutral-600 dark:text-neutral-dark-text-secondary mb-3">
+                          Enter with country code (e.g., +919876543210)
+                        </p>
+                        <input
+                          type="tel"
+                          placeholder="+919876543210"
+                          value={notificationSettings.phoneNumber}
+                          onChange={(e) => {
+                            const newPhone = e.target.value;
+                            setNotificationSettings({
+                              ...notificationSettings,
+                              phoneNumber: newPhone
+                            });
+                          }}
+                          className="w-full px-4 py-2 border border-neutral-300 dark:border-neutral-dark-border rounded-lg bg-white dark:bg-neutral-dark-bg text-neutral-900 dark:text-neutral-dark-text placeholder-neutral-500 focus:ring-2 focus:ring-primary focus:border-transparent"
+                        />
+                        {notificationSettings.phoneNumber && (
+                          <p className="text-xs text-success mt-2">✓ Phone number saved</p>
+                        )}
+                      </label>
+                    </div>
+
                     {/* WhatsApp Notifications */}
                     <div className="p-4 bg-neutral-50 dark:bg-neutral-dark-surface rounded-lg border dark:border-neutral-dark-border">
-                      <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <MessageCircle className="w-5 h-5 text-success" />
                             <p className="font-medium text-neutral-900 dark:text-neutral-dark-text">WhatsApp Notifications</p>
                           </div>
                           <p className="text-sm text-neutral-600 dark:text-neutral-dark-text-secondary">
-                            Receive WhatsApp alerts when items are about to expire
+                            {notificationSettings.phoneNumber 
+                              ? 'Receive WhatsApp alerts when items are about to expire'
+                              : '⚠️ Please enter phone number first'}
                           </p>
                         </div>
-                        <label className="relative inline-flex items-center cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={notificationSettings.whatsappNotifications}
-                            disabled={!notificationSettings.notificationsEnabled}
-                            onChange={(e) => setNotificationSettings({
-                              ...notificationSettings,
-                              whatsappNotifications: e.target.checked
-                            })}
-                            className="sr-only peer"
-                          />
-                          <div className="w-11 h-6 bg-neutral-300 dark:bg-neutral-dark-border peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 dark:peer-focus:ring-primary-600 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-success peer-disabled:opacity-50"></div>
-                        </label>
-                      </div>
-                      <div className="mt-4">
-                        <Input
-                          label="Phone Number (with country code)"
-                          placeholder="+1234567890 or +919876543210"
-                          value={notificationSettings.phoneNumber}
-                          onChange={(e) => setNotificationSettings({
-                            ...notificationSettings,
-                            phoneNumber: e.target.value
-                          })}
-                          disabled={!notificationSettings.whatsappNotifications}
-                          className="mb-3"
-                        />
-                        <Button
-                          size="sm"
-                          variant="success"
-                          icon={Send}
-                          onClick={handleTestWhatsApp}
-                          disabled={!notificationSettings.whatsappNotifications || !notificationSettings.phoneNumber || testingWhatsApp}
-                        >
-                          {testingWhatsApp ? 'Sending...' : 'Test WhatsApp'}
-                        </Button>
-                        <p className="text-xs text-neutral-500 dark:text-neutral-dark-text-muted mt-2">
-                          Format: +[country code][number], e.g., +1234567890 or +919876543210
-                        </p>
+                        <div className="flex items-center gap-3">
+                          <label className="relative inline-flex items-center cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={notificationSettings.whatsappNotifications}
+                              disabled={!notificationSettings.notificationsEnabled || !notificationSettings.phoneNumber}
+                              onChange={(e) => setNotificationSettings({
+                                ...notificationSettings,
+                                whatsappNotifications: e.target.checked
+                              })}
+                              className="sr-only peer"
+                            />
+                            <div className={`w-11 h-6 rounded-full peer transition-colors ${
+                              !notificationSettings.notificationsEnabled || !notificationSettings.phoneNumber
+                                ? 'bg-gray-300 cursor-not-allowed'
+                                : 'bg-neutral-300 dark:bg-neutral-dark-border peer-checked:bg-success'
+                            } peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-300 dark:peer-focus:ring-primary-600 peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all`}></div>
+                          </label>
+                          <Button
+                            size="sm"
+                            variant="success"
+                            icon={Send}
+                            onClick={handleTestWhatsApp}
+                            disabled={!notificationSettings.whatsappNotifications || !notificationSettings.phoneNumber || testingWhatsApp}
+                          >
+                            {testingWhatsApp ? 'Sending...' : 'Test'}
+                          </Button>
+                        </div>
                       </div>
                     </div>
 

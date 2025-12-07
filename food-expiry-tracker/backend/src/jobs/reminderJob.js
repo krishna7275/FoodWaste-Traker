@@ -2,8 +2,10 @@ import cron from 'node-cron';
 import Item from '../models/Item.js';
 import Alert from '../models/Alert.js';
 import User from '../models/User.js';
-import { sendExpiryAlert } from '../services/emailService.js';
-import { sendWhatsAppAlert } from '../services/whatsappService.js';
+import {
+  sendEmailNotification,
+  sendWhatsAppNotification,
+} from '../services/notificationService.js';
 
 // Function to create alerts for expiring items
 const checkExpiringItems = async () => {
@@ -79,12 +81,19 @@ const checkExpiringItems = async () => {
             // Send email notification
             if (user.preferences.emailNotifications && user.preferences.notificationsEnabled) {
               notificationPromises.push(
-                sendExpiryAlert(user, item, daysUntilExpiry).then(result => {
-                  if (result.success) {
-                    alert.sent = true;
+                sendEmailNotification(user.email, `⏰ ${message}`, {
+                  name: item.name,
+                  quantity: item.quantity,
+                  unit: item.unit || 'pieces',
+                  category: item.category || 'Uncategorized',
+                  expiryDate: item.expiryDate,
+                  status: message,
+                }).then(success => {
+                  if (success) {
                     alert.emailSent = true;
+                    alert.sent = true;
                   }
-                  return result;
+                  return success;
                 })
               );
             }
@@ -92,12 +101,19 @@ const checkExpiringItems = async () => {
             // Send WhatsApp notification
             if (user.preferences.whatsappNotifications && user.preferences.notificationsEnabled && user.phoneNumber) {
               notificationPromises.push(
-                sendWhatsAppAlert(user, item, daysUntilExpiry).then(result => {
-                  if (result.success) {
-                    alert.sent = true;
+                sendWhatsAppNotification(user.phoneNumber, {
+                  name: item.name,
+                  quantity: item.quantity,
+                  unit: item.unit || 'pieces',
+                  category: item.category || 'Uncategorized',
+                  expiryDate: item.expiryDate,
+                  status: message,
+                }).then(success => {
+                  if (success) {
                     alert.whatsappSent = true;
+                    alert.sent = true;
                   }
-                  return result;
+                  return success;
                 })
               );
             }

@@ -1,17 +1,17 @@
 import express from 'express';
+import auth from '../middleware/auth.js';
 import User from '../models/User.js';
-import { authMiddleware } from '../middleware/auth.js';
-import { sendTestEmail } from '../services/emailService.js';
-import { sendTestWhatsApp } from '../services/whatsappService.js';
+import {
+  testEmail,
+  testWhatsApp,
+} from '../services/notificationService.js';
 
 const router = express.Router();
 
-router.use(authMiddleware);
-
 // GET /api/notifications/preferences - Get notification preferences
-router.get('/preferences', async (req, res) => {
+router.get('/preferences', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.userId);
+    const user = await User.findById(req.user.id);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -30,7 +30,7 @@ router.get('/preferences', async (req, res) => {
 });
 
 // PUT /api/notifications/preferences - Update notification preferences
-router.put('/preferences', async (req, res) => {
+router.put('/preferences', auth, async (req, res) => {
   try {
     const { 
       notificationsEnabled, 
@@ -59,7 +59,7 @@ router.put('/preferences', async (req, res) => {
     }
 
     const user = await User.findByIdAndUpdate(
-      req.userId,
+      req.user.id,
       { $set: updateData },
       { new: true }
     );
@@ -85,9 +85,9 @@ router.put('/preferences', async (req, res) => {
 });
 
 // POST /api/notifications/test/email - Send test email
-router.post('/test/email', async (req, res) => {
+router.post('/test/email', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.userId);
+    const user = await User.findById(req.user.id);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -96,12 +96,12 @@ router.post('/test/email', async (req, res) => {
       return res.status(400).json({ error: 'Email notifications are disabled' });
     }
 
-    const result = await sendTestEmail(user);
+    const success = await testEmail(user.email);
     
-    if (result.success) {
-      res.json({ message: 'Test email sent successfully', messageId: result.messageId });
+    if (success) {
+      res.json({ message: 'Test email sent successfully! Check your inbox.' });
     } else {
-      res.status(500).json({ error: result.error || 'Failed to send test email' });
+      res.status(500).json({ error: 'Failed to send test email. Check server logs.' });
     }
   } catch (error) {
     console.error('Send test email error:', error);
@@ -110,9 +110,9 @@ router.post('/test/email', async (req, res) => {
 });
 
 // POST /api/notifications/test/whatsapp - Send test WhatsApp
-router.post('/test/whatsapp', async (req, res) => {
+router.post('/test/whatsapp', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.userId);
+    const user = await User.findById(req.user.id);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -125,12 +125,12 @@ router.post('/test/whatsapp', async (req, res) => {
       return res.status(400).json({ error: 'WhatsApp notifications are disabled' });
     }
 
-    const result = await sendTestWhatsApp(user);
+    const success = await testWhatsApp(user.phoneNumber);
     
-    if (result.success) {
-      res.json({ message: 'Test WhatsApp message sent successfully', messageSid: result.messageSid });
+    if (success) {
+      res.json({ message: 'Test WhatsApp sent successfully! Check your messages.' });
     } else {
-      res.status(500).json({ error: result.error || 'Failed to send test WhatsApp message' });
+      res.status(500).json({ error: 'Failed to send test WhatsApp. Check server logs.' });
     }
   } catch (error) {
     console.error('Send test WhatsApp error:', error);
@@ -139,4 +139,3 @@ router.post('/test/whatsapp', async (req, res) => {
 });
 
 export default router;
-
