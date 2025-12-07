@@ -65,23 +65,23 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // Routes
 // Routes - Order matters! More specific routes first
-app.use('/api/auth', authRoutes);
+app.use('/auth', authRoutes);
 
 // Other routes
-app.use('/api/items', itemRoutes);
-app.use('/api/barcode', barcodeRoutes);
-app.use('/api/ocr', ocrRoutes);
-app.use('/api/recipes', recipeRoutes);
-app.use('/api/analytics', analyticsRoutes);
-app.use('/api/achievements', achievementRoutes);
-app.use('/api/notifications', notificationRoutes);
-app.use('/api/leaderboard', leaderboardRoutes);
-app.use('/api/challenges', challengeRoutes);
-app.use('/api/meal-planning', mealPlanningRoutes);
-app.use('/api/cron', cronRoutes); // Add the new cron route
+app.use('/items', itemRoutes);
+app.use('/barcode', barcodeRoutes);
+app.use('/ocr', ocrRoutes);
+app.use('/recipes', recipeRoutes);
+app.use('/analytics', analyticsRoutes);
+app.use('/achievements', achievementRoutes);
+app.use('/notifications', notificationRoutes);
+app.use('/leaderboard', leaderboardRoutes);
+app.use('/challenges', challengeRoutes);
+app.use('/meal-planning', mealPlanningRoutes);
+app.use('/cron', cronRoutes); // Add the new cron route
 
 // Health check
-app.get('/api/health', (req, res) => {
+app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Food Expiry Tracker API is running' });
 });
 
