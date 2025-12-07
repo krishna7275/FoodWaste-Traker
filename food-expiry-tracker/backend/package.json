@@ -4,18 +4,13 @@
   "description": "Backend for Food Expiry Tracker",
   "main": "src/server.js",
   "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "start": "node src/server.js",
     "dev": "nodemon src/server.js"
   },
-  "keywords": [
-    "food",
-    "expiry",
-    "tracker",
-    "ai"
-  ],
-  "author": "",
-  "license": "MIT",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.20.0",
     "axios": "^1.6.5",
@@ -31,7 +26,5 @@
   },
   "devDependencies": {
     "nodemon": "^3.0.3"
-  },
-  "engines": { "node": "18.x" }
-
+  }
 }
