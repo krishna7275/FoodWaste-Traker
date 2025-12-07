@@ -63,7 +63,8 @@ export const ocrAPI = {
 
 // Recipes API
 export const recipesAPI = {
-  generate: (ingredients) => api.post('/recipes', { ingredients }),
+  // TEMP: Use test endpoint (no auth required) for debugging
+  generate: (ingredients) => api.post('/recipes/test', { ingredients }),
 };
 
 export default api;

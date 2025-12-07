@@ -20,6 +20,7 @@ const envPath = path.resolve(__dirname, '../.env');
 dotenv.config({ path: envPath });
 
 // Debug: log if API key is loaded
+console.log('ANTHROPIC_API_KEY value:', process.env.ANTHROPIC_API_KEY);
 if (process.env.ANTHROPIC_API_KEY) {
   console.log('✅ Anthropic API key loaded successfully');
 } else {
