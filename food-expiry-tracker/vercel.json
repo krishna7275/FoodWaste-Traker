@@ -14,13 +14,21 @@
     }
   ],
   "routes": [
+    // Route all API requests to the backend serverless function
     {
       "src": "/api/(.*)",
       "dest": "backend/src/server.js"
     },
+    // Serve static assets from the frontend build output
+    {
+      "src": "/assets/(.*)",
+      "dest": "frontend/dist/assets/$1"
+    },
+    // For any other non-API, non-asset request, serve the main index.html
+    // This allows client-side routing (React Router) to work correctly.
     {
       "src": "/(.*)",
-      "dest": "/frontend/dist/$1"
+      "dest": "frontend/dist/index.html"
     }
   ],
   "crons": [
