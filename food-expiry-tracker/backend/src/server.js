@@ -67,11 +67,6 @@ mongoose.connect(process.env.MONGODB_URI)
 // Routes - Order matters! More specific routes first
 app.use('/api/auth', authRoutes);
 
-// Health check (before other routes)
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', message: 'Food Expiry Tracker API is running' });
-});
-
 // Other routes
 app.use('/api/items', itemRoutes);
 app.use('/api/barcode', barcodeRoutes);
