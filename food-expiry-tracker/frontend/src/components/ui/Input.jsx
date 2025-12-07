@@ -22,12 +22,12 @@ const Input = ({
         )}
         <input
           className={`
-            w-full px-4 py-3 border rounded-lg transition-colors duration-200
+            w-full px-4 py-3 border rounded-lg transition-colors duration-200 overflow-hidden
             focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-primary-400
             ${Icon ? 'pl-10' : ''}
             ${error ? 'border-danger-300 focus:ring-danger-400 focus:border-danger-400' : 'border-neutral-300'}
             disabled:bg-neutral-100 disabled:cursor-not-allowed
-            placeholder:text-neutral-400
+            placeholder:text-neutral-400 text-base
           `}
           {...props}
         />

@@ -1,46 +1,10 @@
 export const getRecipeGenerationPrompt = (ingredients) => {
-  return `You are a professional chef AI assistant specializing in reducing food waste and creating quick, practical recipes.
+  return `Create 3 quick recipes using these ingredients: ${ingredients.join(", ")}
 
-TASK: Generate 3 diverse, creative recipes using the provided ingredients that are about to expire.
+Return ONLY this exact JSON format, no markdown or extra text:
+{"recipes":[{"title":"Recipe 1","time_mins":20,"difficulty":"Easy","ingredients":["ingredient1 measurement","ingredient2 measurement"],"steps":["Heat pan","Add ingredients","Cook 5 minutes","Serve"],"uses":["ingredient1","ingredient2"],"waste_reduction_score":80},{"title":"Recipe 2","time_mins":15,"difficulty":"Easy","ingredients":["ingredient1 measurement"],"steps":["Prepare","Cook","Serve"],"uses":["ingredient1"],"waste_reduction_score":75},{"title":"Recipe 3","time_mins":25,"difficulty":"Medium","ingredients":["ingredient1 measurement"],"steps":["Mix","Cook","Finish","Plate"],"uses":["ingredient1"],"waste_reduction_score":85}]}
 
-INGREDIENTS PROVIDED: ${ingredients.join(", ")}
-
-REQUIREMENTS:
-- Each recipe should use a different cooking technique or style
-- Vary the time, difficulty, and ingredients used in each recipe
-- Prioritize recipes that use the MOST of the provided ingredients
-- Keep recipes simple and quick (under 30 minutes)
-- Include exact measurements for all ingredients
-- You may add common pantry staples (salt, oil, spices, etc.) if needed
-- Make recipes practical for home cooking
-- Focus on minimizing food waste by using as many provided ingredients as possible
-- CRITICAL: Ensure all JSON strings are properly escaped (backslashes, quotes, newlines)
-
-OUTPUT FORMAT:
-Respond ONLY with valid JSON (no markdown, no code blocks, no explanations).
-
-{
-  "recipes": [
-    {
-      "title": "Descriptive Recipe Name",
-      "time_mins": 20,
-      "difficulty": "Easy",
-      "ingredients": ["1 cup milk", "2 eggs", "1 slice bread"],
-      "steps": ["Step 1 with simple details", "Step 2 with simple details", "Step 3 with simple details"],
-      "uses": ["milk", "eggs", "bread"],
-      "waste_reduction_score": 85
-    }
-  ]
-}
-
-IMPORTANT INSTRUCTIONS:
-1. Do NOT use markdown code blocks or backticks
-2. Escape all special characters in strings (use \\" for quotes, \\\\ for backslashes)
-3. Keep step descriptions SHORT and SIMPLE (under 100 characters each)
-4. Do NOT include line breaks within JSON strings
-5. Output ONLY the JSON object, nothing else
-
-Generate 3 diverse recipes now:`;
+Make each recipe different. Keep steps short.`;
 };
 
 export const getOCRParsingPrompt = (ocrText) => {

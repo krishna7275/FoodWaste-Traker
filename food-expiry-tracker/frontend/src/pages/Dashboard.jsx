@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Package, AlertTriangle, CheckCircle, TrendingUp, Plus, ChefHat } from 'lucide-react';
+import { Package, AlertTriangle, CheckCircle, TrendingUp, Plus, ChefHat, Leaf } from 'lucide-react';
 import Navbar from '../components/ui/Navbar';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Loader from '../components/ui/Loader';
+import StatsCard from '../components/StatsCard';
 import { itemsAPI } from '../services/api';
 import { formatDate, getDaysUntilExpiry, getStatusColor, formatCurrency } from '../utils/auth';
 import { useToast } from '../components/ui/Toast';
+import { useI18n } from '../context/I18nContext';
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { addToast } = useToast();
+  const { t } = useI18n();
   const [stats, setStats] = useState(null);
   const [expiringItems, setExpiringItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -102,10 +105,10 @@ const Dashboard = () => {
           className="mb-8"
         >
           <h1 className="text-3xl font-display font-bold text-neutral-900 mb-2">
-            Dashboard
+            {t('dashboard.title')}
           </h1>
           <p className="text-neutral-600">
-            Welcome back! Here's an overview of your food inventory.
+            {t('dashboard.subtitle')}
           </p>
         </motion.div>
 

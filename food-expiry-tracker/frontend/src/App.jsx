@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastProvider } from './components/ui/Toast';
+import { I18nProvider } from './context/I18nContext';
 import { isAuthenticated } from './utils/auth';
 
 // Pages
@@ -10,6 +11,7 @@ import Dashboard from './pages/Dashboard';
 import AddItem from './pages/AddItem';
 import ItemList from './pages/ItemList';
 import Recipes from './pages/Recipes';
+import MealPlanning from './pages/MealPlanning';
 import Alerts from './pages/Alerts';
 import Settings from './pages/Settings';
 
@@ -20,13 +22,14 @@ const ProtectedRoute = ({ children }) => {
 
 function App() {
   return (
-    <ToastProvider>
-      <BrowserRouter
-  future={{
-    v7_startTransition: true,
-    v7_relativeSplatPath: true,
-  }}
->
+    <BrowserRouter
+      future={{
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+      }}
+    >
+      <I18nProvider>
+        <ToastProvider>
         <Routes>
           {/* Public Routes */}
           <Route path="/login" element={<Login />} />
@@ -66,6 +69,14 @@ function App() {
             }
           />
           <Route
+            path="/meal-plan"
+            element={
+              <ProtectedRoute>
+                <MealPlanning />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/alerts"
             element={
               <ProtectedRoute>
@@ -97,8 +108,9 @@ function App() {
           {/* 404 Route */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </BrowserRouter>
-    </ToastProvider>
+        </ToastProvider>
+      </I18nProvider>
+    </BrowserRouter>
   );
 }
 

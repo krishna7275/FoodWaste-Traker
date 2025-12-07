@@ -12,7 +12,7 @@ const Button = ({
   icon: Icon,
   ...props 
 }) => {
-  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap';
   
   const variants = {
     primary: 'bg-primary text-white hover:bg-primary-600 focus:ring-primary-400 active:bg-primary-700',
@@ -38,8 +38,8 @@ const Button = ({
       className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
       {...props}
     >
-      {Icon && <Icon className="w-5 h-5 mr-2" />}
-      {children}
+      {Icon && <Icon className="w-5 h-5 mr-2 flex-shrink-0" />}
+      <span>{children}</span>
     </motion.button>
   );
 };

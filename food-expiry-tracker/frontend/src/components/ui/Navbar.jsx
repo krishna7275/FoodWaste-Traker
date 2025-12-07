@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Home, Package, Plus, ChefHat, Bell, Settings, LogOut, Menu, X } from 'lucide-react';
+import { Home, Package, Plus, ChefHat, Bell, Settings, LogOut, Menu, X, Calendar } from 'lucide-react';
 import { clearAuthData, getUser } from '../../utils/auth';
+import LanguageSwitcher from '../LanguageSwitcher';
+import { useI18n } from '../../context/I18nContext';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const user = getUser();
+  const { t } = useI18n();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
@@ -16,20 +19,21 @@ const Navbar = () => {
   };
 
   const navItems = [
-    { path: '/dashboard', icon: Home, label: 'Dashboard' },
-    { path: '/items', icon: Package, label: 'Items' },
-    { path: '/add', icon: Plus, label: 'Add Item' },
-    { path: '/recipes', icon: ChefHat, label: 'Recipes' },
-    { path: '/alerts', icon: Bell, label: 'Alerts' },
-    { path: '/settings', icon: Settings, label: 'Settings' },
+    { path: '/dashboard', icon: Home, label: t('nav.dashboard') },
+    { path: '/items', icon: Package, label: t('nav.items') },
+    { path: '/add', icon: Plus, label: t('nav.addItem') },
+    { path: '/recipes', icon: ChefHat, label: t('nav.recipes') },
+    { path: '/meal-plan', icon: Calendar, label: t('nav.mealPlan') },
+    { path: '/alerts', icon: Bell, label: t('nav.alerts') },
+    { path: '/settings', icon: Settings, label: t('nav.settings') },
   ];
 
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-30">
+    <nav className="bg-white border-b border-neutral-200 sticky top-0 z-40 w-full">
       <div className="container-custom">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-16 gap-4 overflow-hidden">
           {/* Logo */}
           <Link to="/dashboard" className="flex items-center space-x-2">
             <motion.div
@@ -69,6 +73,7 @@ const Navbar = () => {
 
           {/* User Menu */}
           <div className="hidden md:flex items-center space-x-4">
+            <LanguageSwitcher />
             <div className="text-right">
               <p className="text-sm font-medium text-neutral-900">{user?.name}</p>
               <p className="text-xs text-neutral-500">{user?.email}</p>
