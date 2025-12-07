@@ -16,7 +16,8 @@ import notificationRoutes from './routes/notifications.js';
 import leaderboardRoutes from './routes/leaderboard.js';
 import challengeRoutes from './routes/challenges.js';
 import mealPlanningRoutes from './routes/mealPlanning.js';
-import { startReminderJob } from './jobs/reminderJob.js';
+import cronRoutes from './routes/cron.js'; // Import the new cron routes
+// We will no longer start the job directly, so the import below can be removed.
 
 // Get the directory of the current file (for ES modules)
 const __filename = fileURLToPath(import.meta.url);
@@ -55,8 +56,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => {
     console.log('✅ Connected to MongoDB');
-    // Start the reminder cron job
-    startReminderJob();
+    // The cron job is now handled by Vercel, so we no longer start it here.
   })
   .catch((err) => {
     console.error('❌ MongoDB connection error:', err);
@@ -83,6 +83,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/challenges', challengeRoutes);
 app.use('/api/meal-planning', mealPlanningRoutes);
+app.use('/api/cron', cronRoutes); // Add the new cron route
 
 // Health check
 app.get('/api/health', (req, res) => {
